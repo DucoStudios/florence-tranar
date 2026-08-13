@@ -2,7 +2,7 @@
 <html lang="sv">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
 <title>Florence tränar</title>
 <link rel="manifest" href="./manifest.webmanifest" />
 <link rel="icon" href="./icon.svg" type="image/svg+xml" />
@@ -27,16 +27,25 @@
     }
   }
 
-  [data-palette="solsken"] { --accent: #FFB020; --accent-ink: #241A00; }
-  [data-palette="havet"]   { --accent: #2FB0C7; --accent-ink: #00232B; }
-  [data-palette="skogen"]  { --accent: #4CAF6D; --accent-ink: #06210F; }
-  [data-palette="rymden"]  { --accent: #8C6FE0; --accent-ink: #1B1033; }
-  [data-palette="korall"]  { --accent: #FF6F91; --accent-ink: #330012; }
-  [data-theme="dark"][data-palette="solsken"], :root:not([data-theme="light"])[data-palette="solsken"] { --accent-soft: #3D3220; }
-  [data-theme="dark"][data-palette="havet"], :root:not([data-theme="light"])[data-palette="havet"] { --accent-soft: #1B333A; }
-  [data-theme="dark"][data-palette="skogen"], :root:not([data-theme="light"])[data-palette="skogen"] { --accent-soft: #1D3324; }
-  [data-theme="dark"][data-palette="rymden"], :root:not([data-theme="light"])[data-palette="rymden"] { --accent-soft: #2E2648; }
-  [data-theme="dark"][data-palette="korall"], :root:not([data-theme="light"])[data-palette="korall"] { --accent-soft: #3D2030; }
+  [data-palette="solsken"] { --accent: #FFB020; --accent-ink: #241A00; --accent-soft: #FFF1D6; }
+  [data-palette="havet"]   { --accent: #2FB0C7; --accent-ink: #00232B; --accent-soft: #DCF3F7; }
+  [data-palette="skogen"]  { --accent: #4CAF6D; --accent-ink: #06210F; --accent-soft: #DFF3E4; }
+  [data-palette="rymden"]  { --accent: #8C6FE0; --accent-ink: #1B1033; --accent-soft: #E9E2FA; }
+  [data-palette="korall"]  { --accent: #FF6F91; --accent-ink: #330012; --accent-soft: #FFE1E8; }
+
+  :root[data-theme="dark"][data-palette="solsken"] { --accent-soft: #3D3220; }
+  :root[data-theme="dark"][data-palette="havet"]   { --accent-soft: #1B333A; }
+  :root[data-theme="dark"][data-palette="skogen"]  { --accent-soft: #1D3324; }
+  :root[data-theme="dark"][data-palette="rymden"]  { --accent-soft: #2E2648; }
+  :root[data-theme="dark"][data-palette="korall"]  { --accent-soft: #3D2030; }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"])[data-palette="solsken"] { --accent-soft: #3D3220; }
+    :root:not([data-theme="light"])[data-palette="havet"]   { --accent-soft: #1B333A; }
+    :root:not([data-theme="light"])[data-palette="skogen"]  { --accent-soft: #1D3324; }
+    :root:not([data-theme="light"])[data-palette="rymden"]  { --accent-soft: #2E2648; }
+    :root:not([data-theme="light"])[data-palette="korall"]  { --accent-soft: #3D2030; }
+  }
 
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body { margin: 0; padding: 0; overflow-x: hidden; }
@@ -45,7 +54,7 @@
     background: var(--page-bg); color: var(--ink);
     font-family: -apple-system, "SF Pro Display", ui-sans-serif, "Segoe UI", sans-serif;
     line-height: 1.4; overscroll-behavior-y: contain;
-    padding: 1.6rem 1rem 4rem;
+    padding: 1.6rem 1rem calc(6rem + env(safe-area-inset-bottom));
   }
   .wrap { max-width: 640px; margin: 0 auto; }
   h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; margin: 0 0 0.15rem; }
