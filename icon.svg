@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 512 512" role="img" aria-label="Florence tränar">
+  <rect width="512" height="512" rx="112" fill="#241A33"/>
+  <path fill="#FFC845" d="M256 84l44 122 130 4-104 80 39 126-109-76-109 76 39-126-104-80 130-4z"/>
+  <circle cx="256" cy="256" r="30" fill="#241A33"/>
+</svg>

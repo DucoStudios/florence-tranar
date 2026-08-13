@@ -1,0 +1,9 @@
+{
+  "name": "florence-tranar",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "typecheck": "node scripts/check-static.mjs",
+    "test": "node --test tests/app.test.mjs"
+  }
+}

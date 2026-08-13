@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>Florence tränar</title>
+<link rel="manifest" href="./manifest.webmanifest" />
+<link rel="icon" href="./icon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="./icon-192.png" />
+<meta name="theme-color" content="#FFC845" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<style>
+  :root {
+    --page-bg: #FBF7EE; --ink: #241A33; --ink-soft: #6B6178; --card-bg: #FFFFFF;
+    --line: #E7E0F2; --shadow: rgba(36,26,51,0.08);
+    --accent: #FFB020; --accent-ink: #241A00; --accent-soft: #FFF1D6;
+  }
+  :root[data-theme="dark"] {
+    --page-bg: #171225; --ink: #F3EEFA; --ink-soft: #B3A9C4; --card-bg: #211A33;
+    --line: #362A4D; --shadow: rgba(0,0,0,0.35); --accent-soft: #3D3220;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --page-bg: #171225; --ink: #F3EEFA; --ink-soft: #B3A9C4; --card-bg: #211A33;
+      --line: #362A4D; --shadow: rgba(0,0,0,0.35); --accent-soft: #3D3220;
+    }
+  }
+
+  [data-palette="solsken"] { --accent: #FFB020; --accent-ink: #241A00; }
+  [data-palette="havet"]   { --accent: #2FB0C7; --accent-ink: #00232B; }
+  [data-palette="skogen"]  { --accent: #4CAF6D; --accent-ink: #06210F; }
+  [data-palette="rymden"]  { --accent: #8C6FE0; --accent-ink: #1B1033; }
+  [data-palette="korall"]  { --accent: #FF6F91; --accent-ink: #330012; }
+  [data-theme="dark"][data-palette="solsken"], :root:not([data-theme="light"])[data-palette="solsken"] { --accent-soft: #3D3220; }
+  [data-theme="dark"][data-palette="havet"], :root:not([data-theme="light"])[data-palette="havet"] { --accent-soft: #1B333A; }
+  [data-theme="dark"][data-palette="skogen"], :root:not([data-theme="light"])[data-palette="skogen"] { --accent-soft: #1D3324; }
+  [data-theme="dark"][data-palette="rymden"], :root:not([data-theme="light"])[data-palette="rymden"] { --accent-soft: #2E2648; }
+  [data-theme="dark"][data-palette="korall"], :root:not([data-theme="light"])[data-palette="korall"] { --accent-soft: #3D2030; }
+
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html, body { margin: 0; padding: 0; overflow-x: hidden; }
+  html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+  body {
+    background: var(--page-bg); color: var(--ink);
+    font-family: -apple-system, "SF Pro Display", ui-sans-serif, "Segoe UI", sans-serif;
+    line-height: 1.4; overscroll-behavior-y: contain;
+    padding: 1.6rem 1rem 4rem;
+  }
+  .wrap { max-width: 640px; margin: 0 auto; }
+  h1 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em; margin: 0 0 0.15rem; }
+  h2 { font-size: 1.05rem; font-weight: 800; margin: 0 0 0.6rem; }
+  p { margin: 0; }
+  .lede { color: var(--ink-soft); font-size: 0.95rem; margin-bottom: 1.1rem; }
+  .section-label { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-soft); margin: 1.4rem 0 0.5rem; }
+  .card { background: var(--card-bg); border: 1px solid var(--line); border-radius: 1rem; padding: 1rem; box-shadow: 0 4px 14px var(--shadow); margin-bottom: 0.9rem; }
+
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.2rem; }
+  .menu-btn { width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--line); background: var(--card-bg); color: var(--ink); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; cursor: pointer; flex: 0 0 auto; }
+
+  .hero { display: flex; gap: 0.8rem; margin-bottom: 1rem; }
+  .stat-box { flex: 1; min-width: 0; background: var(--card-bg); border: 1px solid var(--line); border-radius: 1rem; padding: 0.9rem 1rem; box-shadow: 0 4px 14px var(--shadow); }
+  .stat-box .label { font-size: 0.66rem; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.04em; font-weight: 700; margin-bottom: 0.2rem; }
+  .stat-box .value { font-size: 1.4rem; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -0.01em; }
+  .stat-box.accent { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .stat-box.accent .label { color: var(--accent-ink); opacity: 0.75; }
+
+  .workout-grid { display: flex; flex-direction: column; gap: 0.6rem; }
+  .workout-opt {
+    display: flex; align-items: center; gap: 0.7rem; padding: 0.75rem 0.8rem;
+    border-radius: 0.8rem; border: 2px solid var(--line); background: var(--page-bg);
+    cursor: pointer; text-align: left; width: 100%; font: inherit; color: inherit;
+  }
+  .workout-opt .dot { flex: 0 0 auto; width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--ink-soft); display: flex; align-items: center; justify-content: center; font-size: 0.85rem; }
+  .workout-opt.selected { border-color: var(--accent); background: var(--accent-soft); }
+  .workout-opt.selected .dot { border-color: var(--accent); background: var(--accent); color: var(--accent-ink); }
+  .workout-opt .title { font-weight: 700; font-size: 0.95rem; }
+  .workout-opt .desc { font-size: 0.8rem; color: var(--ink-soft); margin-top: 0.1rem; }
+  .done-banner { display: flex; align-items: center; gap: 0.6rem; padding: 0.7rem 0.8rem; border-radius: 0.8rem; background: var(--accent-soft); color: var(--ink); font-weight: 700; font-size: 0.9rem; margin-bottom: 0.6rem; }
+
+  .habit-row { display: flex; align-items: flex-start; gap: 0.7rem; padding: 0.65rem 0.1rem; cursor: pointer; user-select: none; border-bottom: 1px solid var(--line); }
+  .habit-row:last-child { border-bottom: none; }
+  .habit-row .check { flex: 0 0 auto; width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--ink-soft); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; margin-top: 0.1rem; }
+  .habit-row.checked .check { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+  .habit-row .label { font-weight: 700; font-size: 0.92rem; }
+  .habit-row.checked .label { text-decoration: line-through; opacity: 0.65; }
+  .habit-row .tip { font-size: 0.8rem; color: var(--ink-soft); margin-top: 0.15rem; }
+
+  .week-row { display: flex; gap: 0.4rem; }
+  .week-day { flex: 1; min-width: 0; text-align: center; }
+  .week-day .dname { font-size: 0.62rem; color: var(--ink-soft); margin-bottom: 0.3rem; }
+  .week-day .bar { height: 34px; border-radius: 0.5rem; background: var(--line); position: relative; overflow: hidden; }
+  .week-day .bar-fill { position: absolute; left: 0; right: 0; bottom: 0; background: var(--accent); }
+  .week-day.today .dname { color: var(--ink); font-weight: 800; }
+
+  .challenge-status { display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; margin-bottom: 0.7rem; }
+  .challenge-status .big { font-size: 1.6rem; font-weight: 800; }
+  .challenge-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+  .btn { border: none; border-radius: 0.7rem; padding: 0.65rem 0.9rem; font-weight: 700; font-size: 0.9rem; cursor: pointer; font: inherit; }
+  .btn-primary { background: var(--accent); color: var(--accent-ink); }
+  .btn-ghost { background: var(--card-bg); color: var(--ink); border: 1px solid var(--line); }
+  .btn-small { padding: 0.5rem 0.75rem; font-size: 0.82rem; }
+  .btn-block { width: 100%; }
+
+  .palette-row { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+  .swatch { flex: 0 0 auto; width: 44px; height: 44px; border-radius: 50%; border: 3px solid transparent; cursor: pointer; padding: 0; }
+  .swatch.selected { border-color: var(--ink); }
+  .swatch-solsken { background: #FFB020; }
+  .swatch-havet { background: #2FB0C7; }
+  .swatch-skogen { background: #4CAF6D; }
+  .swatch-rymden { background: #8C6FE0; }
+  .swatch-korall { background: #FF6F91; }
+
+  .theme-toggle-row { display: flex; gap: 0.5rem; margin-top: 0.8rem; }
+  .theme-toggle-row .btn { flex: 1; }
+  .theme-toggle-row .btn.active { background: var(--accent); color: var(--accent-ink); }
+
+  nav#navMenu { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: none; z-index: 20; }
+  nav#navMenu.open { display: block; }
+  nav#navMenu .sheet { position: absolute; right: 0; top: 0; bottom: 0; width: min(280px, 82vw); background: var(--card-bg); padding: 1.2rem; display: flex; flex-direction: column; gap: 0.3rem; box-shadow: -8px 0 24px var(--shadow); }
+  nav#navMenu .navTitle { font-weight: 800; font-size: 0.95rem; margin-bottom: 0.6rem; display: flex; justify-content: space-between; align-items: center; }
+  nav#navMenu button.navlink { display: flex; align-items: center; gap: 0.6rem; padding: 0.7rem 0.5rem; border-radius: 0.6rem; border: none; background: none; text-align: left; font: inherit; color: inherit; cursor: pointer; }
+  nav#navMenu button.navlink.current { background: var(--accent-soft); font-weight: 700; }
+
+  .view { display: none; }
+  .view.active { display: block; }
+
+  .data-actions { display: flex; flex-direction: column; gap: 0.6rem; }
+  .data-actions .btn { width: 100%; }
+  textarea.backup { width: 100%; min-height: 90px; font-family: ui-monospace, monospace; font-size: 0.72rem; border-radius: 0.6rem; border: 1px solid var(--line); background: var(--page-bg); color: var(--ink); padding: 0.6rem; }
+
+  .hidden { display: none !important; }
+
+  @media (max-width: 430px) {
+    body { padding-left: 0.75rem; padding-right: 0.75rem; }
+    .hero { gap: 0.45rem; }
+    .stat-box { padding: 0.75rem 0.65rem; }
+    .stat-box .value { font-size: 1.15rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div>
+      <h1>Florence tränar</h1>
+      <p class="lede" id="dateLede">–</p>
+    </div>
+    <button class="menu-btn" id="menuBtn" aria-label="Meny">☰</button>
+  </div>
+
+  <div id="view-idag" class="view active">
+
+    <div class="hero">
+      <div class="stat-box accent">
+        <div class="label">Rörelsedagar</div>
+        <div class="value" id="totalDaysValue">0</div>
+      </div>
+      <div class="stat-box">
+        <div class="label">Bästa streak</div>
+        <div class="value" id="bestStreakValue">0</div>
+      </div>
+    </div>
+
+    <div class="section-label">Dagens rörelse</div>
+    <div class="card">
+      <div id="doneBanner" class="done-banner hidden">✔ Bra jobbat idag!</div>
+      <div class="workout-grid" id="workoutGrid"></div>
+    </div>
+
+    <div class="section-label">Enkla vanor idag</div>
+    <div class="card">
+      <div id="habitList"></div>
+    </div>
+
+    <div class="section-label">Veckan</div>
+    <div class="card">
+      <div class="week-row" id="weekRow"></div>
+    </div>
+
+    <div class="section-label">Utmaning</div>
+    <div class="card">
+      <h2 id="challengeTitle">Inget-socker-utmaning</h2>
+      <p class="lede" id="challengeDesc">Klarar du en dag utan godis och läsk? Helt frivilligt, bara kul!</p>
+      <div id="challengeInactive">
+        <button class="btn btn-primary btn-block" id="startChallengeBtn">Starta utmaningen</button>
+      </div>
+      <div id="challengeActive" class="hidden">
+        <div class="challenge-status">
+          <div>
+            <div class="lede">Du är på</div>
+            <div class="big" id="challengeStreak">0 dagar</div>
+          </div>
+        </div>
+        <div class="challenge-actions">
+          <button class="btn btn-primary" id="challengeSuccessBtn">Idag lyckades jag! 🎉</button>
+          <button class="btn btn-ghost btn-small" id="challengeSlipBtn">Åt godis idag, ingen fara</button>
+          <button class="btn btn-ghost btn-small" id="challengeStopBtn">Avsluta utmaningen</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="view-installningar" class="view">
+    <div class="section-label">Färgtema</div>
+    <div class="card">
+      <h2>Välj din färg</h2>
+      <div class="palette-row" id="paletteRow"></div>
+      <div class="theme-toggle-row">
+        <button class="btn" data-theme-choice="light" id="themeLightBtn">Ljust</button>
+        <button class="btn" data-theme-choice="dark" id="themeDarkBtn">Mörkt</button>
+        <button class="btn" data-theme-choice="system" id="themeSystemBtn">Auto</button>
+      </div>
+    </div>
+
+    <div class="section-label">Om appen</div>
+    <div class="card">
+      <p class="lede">Florence tränar är din egen app – bara kul rörelse och små vanor som gör att du mår bra. Du väljer själv hur mycket du vill checka av.</p>
+    </div>
+
+    <div class="section-label">Backup</div>
+    <div class="card">
+      <p class="lede" style="margin-bottom:0.7rem;">Sparas automatiskt på den här telefonen. Vill du flytta datan till en annan enhet, exportera en backup här.</p>
+      <div class="data-actions">
+        <button class="btn btn-ghost" id="exportBtn">Exportera backup</button>
+        <button class="btn btn-ghost" id="importBtn">Importera backup</button>
+        <button class="btn btn-ghost" id="resetBtn">Nollställ allt</button>
+      </div>
+      <textarea class="backup hidden" id="backupBox" spellcheck="false"></textarea>
+    </div>
+  </div>
+
+  <nav id="navMenu">
+    <div class="sheet">
+      <div class="navTitle">
+        <span>Meny</span>
+        <button class="menu-btn" id="closeMenuBtn" aria-label="Stäng">✕</button>
+      </div>
+      <button class="navlink current" data-nav="idag">Idag</button>
+      <button class="navlink" data-nav="installningar">Färg & inställningar</button>
+    </div>
+  </nav>
+
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var STORE_KEY = "florence-tranar-v1";
+  var WORKOUTS = [
+    { id: "cross", title: "Crosstrainer", desc: "15 minuter på crosstrainern – byt tempo som du vill, ha kul!" },
+    { id: "hoppa", title: "Hoppa & studsa", desc: "Hopprep, jumping jacks eller björngång i 10–15 minuter." },
+    { id: "balans", title: "Balans & stretch", desc: "Balansera, gör yogapositioner och stretcha i lugnt tempo." },
+    { id: "ute", title: "Lek ute", desc: "Cykla, studsmatta eller lek med kompisar – fri lek räknas också!" }
+  ];
+  var HABITS = [
+    { id: "water", label: "Druckit vatten", tip: "Kroppen och hjärnan jobbar bättre när du får i dig vatten istället för läsk och saft." },
+    { id: "outside", label: "Varit ute i dagsljus", tip: "Dagsljus hjälper kroppens inre klocka, så du somnar lättare på kvällen." },
+    { id: "screen", label: "Tagit en skärmpaus", tip: "Ögonen och hjärnan mår bra av att vila från skärmar då och då." },
+    { id: "sleep", label: "La mig i tid ikväll", tip: "Barn i din ålder mår bäst av ungefär 9–11 timmars sömn varje natt." }
+  ];
+  var PALETTES = ["solsken", "havet", "skogen", "rymden", "korall"];
+  var DAY_NAMES = ["Mån", "Tis", "Ons", "Tors", "Fre", "Lör", "Sön"];
+
+  function todayIso() {
+    var d = new Date();
+    return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+  }
+
+  function isoFor(date) {
+    return date.getFullYear() + "-" + String(date.getMonth() + 1).padStart(2, "0") + "-" + String(date.getDate()).padStart(2, "0");
+  }
+
+  function defaultState() {
+    return { version: 1, days: {}, challenge: { active: false, streak: 0, longest: 0 }, palette: "solsken", theme: "system" };
+  }
+
+  function loadState() {
+    try {
+      var raw = localStorage.getItem(STORE_KEY);
+      if (!raw) return defaultState();
+      var parsed = JSON.parse(raw);
+      var base = defaultState();
+      return Object.assign(base, parsed, {
+        days: Object.assign({}, parsed.days || {}),
+        challenge: Object.assign({}, base.challenge, parsed.challenge || {})
+      });
+    } catch (e) {
+      return defaultState();
+    }
+  }
+
+  var state = loadState();
+
+  function saveState() {
+    localStorage.setItem(STORE_KEY, JSON.stringify(state));
+  }
+
+  function dayEntry(iso) {
+    if (!state.days[iso]) state.days[iso] = { workout: null, habits: {} };
+    return state.days[iso];
+  }
+
+  function applyPaletteAndTheme() {
+    document.documentElement.setAttribute("data-palette", state.palette);
+    if (state.theme === "light" || state.theme === "dark") {
+      document.documentElement.setAttribute("data-theme", state.theme);
+    } else {
+      document.documentElement.removeAttribute("data-theme");
+    }
+  }
+
+  function fmtDate() {
+    var days = ["söndag", "måndag", "tisdag", "onsdag", "torsdag", "fredag", "lördag"];
+    var months = ["januari", "februari", "mars", "april", "maj", "juni", "juli", "augusti", "september", "oktober", "november", "december"];
+    var d = new Date();
+    return days[d.getDay()].charAt(0).toUpperCase() + days[d.getDay()].slice(1) + " " + d.getDate() + " " + months[d.getMonth()];
+  }
+
+  function computeStats() {
+    var total = 0;
+    var isoList = Object.keys(state.days).filter(function (iso) { return state.days[iso].workout; }).sort();
+    total = isoList.length;
+
+    var longest = 0, current = 0, prevDate = null;
+    isoList.forEach(function (iso) {
+      var d = new Date(iso + "T00:00:00");
+      if (prevDate) {
+        var diff = Math.round((d - prevDate) / 86400000);
+        current = diff === 1 ? current + 1 : 1;
+      } else {
+        current = 1;
+      }
+      longest = Math.max(longest, current);
+      prevDate = d;
+    });
+    return { total: total, longest: longest };
+  }
+
+  function renderStats() {
+    var stats = computeStats();
+    document.getElementById("totalDaysValue").textContent = String(stats.total);
+    document.getElementById("bestStreakValue").textContent = String(stats.longest);
+  }
+
+  function renderWorkouts() {
+    var iso = todayIso();
+    var entry = dayEntry(iso);
+    var grid = document.getElementById("workoutGrid");
+    grid.innerHTML = WORKOUTS.map(function (w) {
+      var selected = entry.workout === w.id;
+      return '<button type="button" class="workout-opt' + (selected ? " selected" : "") + '" data-workout="' + w.id + '">' +
+        '<span class="dot">' + (selected ? "✓" : "") + '</span>' +
+        '<span><span class="title">' + w.title + '</span><br><span class="desc">' + w.desc + '</span></span>' +
+        '</button>';
+    }).join("");
+
+    grid.querySelectorAll(".workout-opt").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var id = btn.getAttribute("data-workout");
+        entry.workout = entry.workout === id ? null : id;
+        saveState();
+        renderAll();
+      });
+    });
+
+    document.getElementById("doneBanner").classList.toggle("hidden", !entry.workout);
+  }
+
+  function renderHabits() {
+    var iso = todayIso();
+    var entry = dayEntry(iso);
+    var list = document.getElementById("habitList");
+    list.innerHTML = HABITS.map(function (h) {
+      var checked = !!entry.habits[h.id];
+      return '<div class="habit-row' + (checked ? " checked" : "") + '" data-habit="' + h.id + '">' +
+        '<span class="check">' + (checked ? "✓" : "") + '</span>' +
+        '<span><span class="label">' + h.label + '</span><div class="tip">' + h.tip + '</div></span>' +
+        '</div>';
+    }).join("");
+
+    list.querySelectorAll(".habit-row").forEach(function (row) {
+      row.addEventListener("click", function () {
+        var id = row.getAttribute("data-habit");
+        entry.habits[id] = !entry.habits[id];
+        saveState();
+        renderHabits();
+      });
+    });
+  }
+
+  function renderWeek() {
+    var todayD = new Date();
+    var weekday = (todayD.getDay() + 6) % 7; // 0 = Monday
+    var monday = new Date(todayD);
+    monday.setDate(todayD.getDate() - weekday);
+
+    var rows = "";
+    for (var i = 0; i < 7; i++) {
+      var d = new Date(monday);
+      d.setDate(monday.getDate() + i);
+      var iso = isoFor(d);
+      var entry = state.days[iso];
+      var pct = entry && entry.workout ? 100 : (entry && Object.values(entry.habits || {}).some(Boolean) ? 40 : 0);
+      var isToday = iso === todayIso();
+      rows += '<div class="week-day' + (isToday ? " today" : "") + '">' +
+        '<div class="dname">' + DAY_NAMES[i] + '</div>' +
+        '<div class="bar"><div class="bar-fill" style="height:' + pct + '%"></div></div>' +
+        '</div>';
+    }
+    document.getElementById("weekRow").innerHTML = rows;
+  }
+
+  function renderChallenge() {
+    var c = state.challenge;
+    document.getElementById("challengeInactive").classList.toggle("hidden", c.active);
+    document.getElementById("challengeActive").classList.toggle("hidden", !c.active);
+    document.getElementById("challengeStreak").textContent = c.streak + (c.streak === 1 ? " dag" : " dagar");
+  }
+
+  function renderPalette() {
+    var row = document.getElementById("paletteRow");
+    row.innerHTML = PALETTES.map(function (p) {
+      return '<button type="button" class="swatch swatch-' + p + (state.palette === p ? " selected" : "") + '" data-palette-choice="' + p + '" aria-label="' + p + '"></button>';
+    }).join("");
+    row.querySelectorAll(".swatch").forEach(function (sw) {
+      sw.addEventListener("click", function () {
+        state.palette = sw.getAttribute("data-palette-choice");
+        saveState();
+        applyPaletteAndTheme();
+        renderPalette();
+      });
+    });
+
+    ["light", "dark", "system"].forEach(function (t) {
+      var btn = document.getElementById("theme" + t.charAt(0).toUpperCase() + t.slice(1) + "Btn");
+      btn.classList.toggle("active", state.theme === t);
+    });
+  }
+
+  function renderAll() {
+    document.getElementById("dateLede").textContent = fmtDate();
+    renderStats();
+    renderWorkouts();
+    renderHabits();
+    renderWeek();
+    renderChallenge();
+    renderPalette();
+  }
+
+  function switchView(name) {
+    document.querySelectorAll(".view").forEach(function (v) { v.classList.remove("active"); });
+    document.getElementById("view-" + name).classList.add("active");
+    document.querySelectorAll(".navlink").forEach(function (b) {
+      b.classList.toggle("current", b.getAttribute("data-nav") === name);
+    });
+    closeMenu();
+  }
+
+  function openMenu() { document.getElementById("navMenu").classList.add("open"); }
+  function closeMenu() { document.getElementById("navMenu").classList.remove("open"); }
+
+  document.getElementById("menuBtn").addEventListener("click", openMenu);
+  document.getElementById("closeMenuBtn").addEventListener("click", closeMenu);
+  document.getElementById("navMenu").addEventListener("click", function (e) {
+    if (e.target.id === "navMenu") closeMenu();
+  });
+  document.querySelectorAll(".navlink").forEach(function (btn) {
+    btn.addEventListener("click", function () { switchView(btn.getAttribute("data-nav")); });
+  });
+
+  document.getElementById("startChallengeBtn").addEventListener("click", function () {
+    state.challenge = { active: true, streak: 0, longest: state.challenge.longest || 0, startDate: todayIso() };
+    saveState();
+    renderChallenge();
+  });
+  document.getElementById("challengeSuccessBtn").addEventListener("click", function () {
+    state.challenge.streak += 1;
+    state.challenge.longest = Math.max(state.challenge.longest || 0, state.challenge.streak);
+    saveState();
+    renderChallenge();
+  });
+  document.getElementById("challengeSlipBtn").addEventListener("click", function () {
+    state.challenge.streak = 0;
+    saveState();
+    renderChallenge();
+  });
+  document.getElementById("challengeStopBtn").addEventListener("click", function () {
+    state.challenge.active = false;
+    saveState();
+    renderChallenge();
+  });
+
+  ["light", "dark", "system"].forEach(function (t) {
+    var btn = document.getElementById("theme" + t.charAt(0).toUpperCase() + t.slice(1) + "Btn");
+    btn.addEventListener("click", function () {
+      state.theme = t;
+      saveState();
+      applyPaletteAndTheme();
+      renderPalette();
+    });
+  });
+
+  document.getElementById("exportBtn").addEventListener("click", function () {
+    var box = document.getElementById("backupBox");
+    box.value = JSON.stringify(state, null, 2);
+    box.classList.remove("hidden");
+    box.select();
+  });
+  document.getElementById("importBtn").addEventListener("click", function () {
+    var box = document.getElementById("backupBox");
+    if (box.classList.contains("hidden")) {
+      box.value = "";
+      box.classList.remove("hidden");
+      box.placeholder = "Klistra in en tidigare exporterad backup här och klicka igen.";
+      box.focus();
+      return;
+    }
+    try {
+      var parsed = JSON.parse(box.value);
+      state = Object.assign(defaultState(), parsed);
+      saveState();
+      applyPaletteAndTheme();
+      renderAll();
+      box.classList.add("hidden");
+    } catch (e) {
+      alert("Kunde inte läsa backupen. Kolla att du klistrat in rätt text.");
+    }
+  });
+  document.getElementById("resetBtn").addEventListener("click", function () {
+    if (!confirm("Nollställ all data? Går inte att ångra.")) return;
+    state = defaultState();
+    saveState();
+    applyPaletteAndTheme();
+    renderAll();
+  });
+
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("./sw.js").catch(function () {});
+    });
+  }
+  if (navigator.storage && navigator.storage.persist) {
+    navigator.storage.persist().catch(function () {});
+  }
+
+  applyPaletteAndTheme();
+  renderAll();
+})();
+</script>
+</body>
+</html>
