@@ -53,7 +53,7 @@
   body {
     background: var(--page-bg); color: var(--ink);
     font-family: -apple-system, "SF Pro Display", ui-sans-serif, "Segoe UI", sans-serif;
-    line-height: 1.4; overscroll-behavior-y: contain;
+    line-height: 1.4;
     padding: 1.6rem 1rem calc(6rem + env(safe-area-inset-bottom));
   }
   .wrap { max-width: 640px; margin: 0 auto; }
@@ -64,7 +64,8 @@
   .section-label { font-size: 0.72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-soft); margin: 1.4rem 0 0.5rem; }
   .card { background: var(--card-bg); border: 1px solid var(--line); border-radius: 1rem; padding: 1rem; box-shadow: 0 4px 14px var(--shadow); margin-bottom: 0.9rem; }
 
-  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.2rem; }
+  .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.2rem; gap: 0.6rem; }
+  .topbar > div { min-width: 0; }
   .menu-btn { width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--line); background: var(--card-bg); color: var(--ink); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; cursor: pointer; flex: 0 0 auto; }
 
   .hero { display: flex; gap: 0.8rem; margin-bottom: 1rem; }
@@ -81,6 +82,7 @@
     cursor: pointer; text-align: left; width: 100%; font: inherit; color: inherit;
   }
   .workout-opt .dot { flex: 0 0 auto; width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--ink-soft); display: flex; align-items: center; justify-content: center; font-size: 0.85rem; }
+  .workout-opt .opt-text { flex: 1; min-width: 0; }
   .workout-opt.selected { border-color: var(--accent); background: var(--accent-soft); }
   .workout-opt.selected .dot { border-color: var(--accent); background: var(--accent); color: var(--accent-ink); }
   .workout-opt .title { font-weight: 700; font-size: 0.95rem; }
@@ -90,6 +92,7 @@
   .habit-row { display: flex; align-items: flex-start; gap: 0.7rem; padding: 0.65rem 0.1rem; cursor: pointer; user-select: none; border-bottom: 1px solid var(--line); }
   .habit-row:last-child { border-bottom: none; }
   .habit-row .check { flex: 0 0 auto; width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--ink-soft); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; margin-top: 0.1rem; }
+  .habit-row .habit-text { flex: 1; min-width: 0; }
   .habit-row.checked .check { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
   .habit-row .label { font-weight: 700; font-size: 0.92rem; }
   .habit-row.checked .label { text-decoration: line-through; opacity: 0.65; }
@@ -364,7 +367,7 @@
       var selected = entry.workout === w.id;
       return '<button type="button" class="workout-opt' + (selected ? " selected" : "") + '" data-workout="' + w.id + '">' +
         '<span class="dot">' + (selected ? "✓" : "") + '</span>' +
-        '<span><span class="title">' + w.title + '</span><br><span class="desc">' + w.desc + '</span></span>' +
+        '<span class="opt-text"><span class="title">' + w.title + '</span><br><span class="desc">' + w.desc + '</span></span>' +
         '</button>';
     }).join("");
 
@@ -388,7 +391,7 @@
       var checked = !!entry.habits[h.id];
       return '<div class="habit-row' + (checked ? " checked" : "") + '" data-habit="' + h.id + '">' +
         '<span class="check">' + (checked ? "✓" : "") + '</span>' +
-        '<span><span class="label">' + h.label + '</span><div class="tip">' + h.tip + '</div></span>' +
+        '<span class="habit-text"><span class="label">' + h.label + '</span><div class="tip">' + h.tip + '</div></span>' +
         '</div>';
     }).join("");
 
